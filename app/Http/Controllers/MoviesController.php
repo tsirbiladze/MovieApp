@@ -14,11 +14,15 @@ class MoviesController extends Controller
      */
     public function index()
     {
-        $popularMovies = Http::withToken('eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjMGUzYTExNzI4ZGNmYjlmNWUyYTI5MTBkYTQ2ZTA0ZCIsInN1YiI6IjYyMjMyMGE4NzM1MjA1MDAxYzFhNWRlOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.BqoSbkIWhxei7J6k2IGn4vzq9DivG25wEg4NLS6o5zg')
+        $popularMovies = Http::withToken(config('services.tmdb.token'))
             ->get('https://api.themoviedb.org/3/movie/popular')
             ->json()['results'];
+            
+        $nowPlayingMovies = Http::withToken(config('services.tmdb.token'))
+            ->get('https://api.themoviedb.org/3/movie/now_playing')
+            ->json()['results'];
 
-        $genreArray = Http::withToken('eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjMGUzYTExNzI4ZGNmYjlmNWUyYTI5MTBkYTQ2ZTA0ZCIsInN1YiI6IjYyMjMyMGE4NzM1MjA1MDAxYzFhNWRlOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.BqoSbkIWhxei7J6k2IGn4vzq9DivG25wEg4NLS6o5zg')
+        $genreArray = Http::withToken(config('services.tmdb.token'))
             ->get('https://api.themoviedb.org/3/genre/movie/list')
             ->json()['genres'];
 
@@ -26,12 +30,10 @@ class MoviesController extends Controller
             return [$genre['id'] => $genre['name']];
         });
 
-        dump($genres);
-        // dump($genreArray);
-        dump($popularMovies);
         return view('index', [
             'popularMovies' => $popularMovies,
-            'genres' => $genres
+            'nowPlayingMovies' => $nowPlayingMovies,
+            'genres' => $genres,
         ]);
     }
 
@@ -64,7 +66,14 @@ class MoviesController extends Controller
      */
     public function show($id)
     {
-        //
+        $movie = Http::withToken('eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjMGUzYTExNzI4ZGNmYjlmNWUyYTI5MTBkYTQ2ZTA0ZCIsInN1YiI6IjYyMjMyMGE4NzM1MjA1MDAxYzFhNWRlOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.BqoSbkIWhxei7J6k2IGn4vzq9DivG25wEg4NLS6o5zg')
+            ->get('https://api.themoviedb.org/3/movie/' . $id . '?append_to_response=credits,videos,images')
+            ->json();
+        return view('show',
+            [
+                'movie' => $movie,
+            ]
+        );
     }
 
     /**
