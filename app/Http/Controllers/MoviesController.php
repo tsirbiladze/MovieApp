@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\ViewModels\MovieViewModel;
+use App\ViewModels\MoviesViewModel;
 use Illuminate\Support\Facades\Http;
 
 class MoviesController extends Controller
@@ -14,6 +16,8 @@ class MoviesController extends Controller
      */
     public function index()
     {
+        
+
         $popularMovies = Http::withToken(config('services.tmdb.token'))
             ->get('https://api.themoviedb.org/3/movie/popular')
             ->json()['results'];
@@ -22,19 +26,19 @@ class MoviesController extends Controller
             ->get('https://api.themoviedb.org/3/movie/now_playing')
             ->json()['results'];
 
-        $genreArray = Http::withToken(config('services.tmdb.token'))
+        $genres = Http::withToken(config('services.tmdb.token'))
             ->get('https://api.themoviedb.org/3/genre/movie/list')
             ->json()['genres'];
 
-        $genres = collect($genreArray)->mapWithKeys(function ($genre) {
-            return [$genre['id'] => $genre['name']];
-        });
+        
 
-        return view('index', [
-            'popularMovies' => $popularMovies,
-            'nowPlayingMovies' => $nowPlayingMovies,
-            'genres' => $genres,
-        ]);
+        $viewModel = new MoviesViewModel(
+            $popularMovies,
+            $nowPlayingMovies,
+            $genres,
+        );
+
+        return view('index', $viewModel);
     }
 
     /**
@@ -69,11 +73,9 @@ class MoviesController extends Controller
         $movie = Http::withToken('eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjMGUzYTExNzI4ZGNmYjlmNWUyYTI5MTBkYTQ2ZTA0ZCIsInN1YiI6IjYyMjMyMGE4NzM1MjA1MDAxYzFhNWRlOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.BqoSbkIWhxei7J6k2IGn4vzq9DivG25wEg4NLS6o5zg')
             ->get('https://api.themoviedb.org/3/movie/' . $id . '?append_to_response=credits,videos,images')
             ->json();
-        return view('show',
-            [
-                'movie' => $movie,
-            ]
-        );
+
+        $viewModel = new MovieViewModel($movie);
+        return view('show', $viewModel);
     }
 
     /**
