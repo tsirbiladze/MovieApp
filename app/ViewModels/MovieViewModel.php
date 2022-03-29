@@ -22,9 +22,15 @@ class MovieViewModel extends ViewModel
             'genres' => collect($this->movie['genres'])->pluck('name')->flatten()->implode(', '),
             'crew' => collect($this->movie['credits']['crew'])->take(2),
             'images' => collect($this->movie['images']['backdrops'])->take(9),
-            'cast' => collect($this->movie['credits']['cast'])->take(5),
+            'cast' => collect($this->movie['credits']['cast'])->take(5)
         ])->only([
             'poster_path', 'id', 'title', 'vote_average', 'release_date', 'genre_ids', 'overview', 'genres', 'credits', 'videos', 'images', 'crew', 'cast',
         ]);
+    }
+
+
+    private function actorNames()
+    {
+        return collect($this->movie['credits']['cast'])->pluck('name');
     }
 }
