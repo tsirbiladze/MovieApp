@@ -76,11 +76,11 @@
                     <div class="grid grid-cols-1 sm:grid-cols02 lg:grid-cols-5 gap-8">
                         @foreach($knownForMovies as $movie)
                             <div class="mt-4">
-                                <a href="{{ route('movies.show', $movie['id']) }}"><img
+                                <a href="{{ $movie['linkToPage'] }}"><img
                                         src="{{ $movie['poster_path'] }}"
                                         alt="avenger_poster"
                                         class="hover:opacity-75 transition ease-in-out duration-150"></a>
-                                <a href="#"
+                                <a href="{{ $movie['linkToPage'] }}"
                                    class="text-sm leading-normal block text-gray-400 hover:text-white mt-1">{{ $movie['title'] }}</a>
                             </div>
                         @endforeach

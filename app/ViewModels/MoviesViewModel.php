@@ -27,12 +27,10 @@ class MoviesViewModel extends ViewModel
     public function nowPlayingMovies()
     {
         return $this->formatMovies($this->nowPlayingMovies);
-
     }
 
     public function genres()
     {
-        // @foreach($movie['genre_ids'] as $genre){{ $genres->get($genre) }}@if(!$loop->last),@endif @endforeach
         return collect($this->genres)->mapWithKeys(function ($genre) {
             return [$genre['id'] => $genre['name']];
         });
